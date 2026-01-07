@@ -21,6 +21,11 @@ end
 
 function DDRPT:HasAccess(ply)
     if not IsValid(ply) then return false end
+    if DDRPT.Config and DDRPT.Config.RefreshTeams then
+        if DDRPT.Config.AccessTeams and table.Count(DDRPT.Config.AccessTeams) == 0 then
+            DDRPT.Config.RefreshTeams()
+        end
+    end
     return DDRPT.Config.AccessTeams[ply:Team()] == true
 end
 

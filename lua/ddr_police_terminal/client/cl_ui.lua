@@ -2,11 +2,18 @@ DDRPT = DDRPT or {}
 local NET = DDRPT.Net
 
 DDRPT.UI = DDRPT.UI or {}
+surface.CreateFont("DDRPT_Label", {
+    font = "Roboto",
+    size = 16,
+    weight = 600,
+})
+
 DDRPT.UI.Colors = {
     Background = Color(55, 55, 55, 240),
     Panel = Color(70, 70, 70, 255),
     Accent = Color(95, 95, 95, 255),
     Text = Color(255, 255, 255),
+    Placeholder = Color(210, 210, 210),
 }
 
 local function notify(msg)
@@ -61,6 +68,7 @@ end
 function DDRPT.UI.StyleLabel(label)
     if not IsValid(label) then return end
     label:SetTextColor(DDRPT.UI.Colors.Text)
+    label:SetFont("DDRPT_Label")
 end
 
 function DDRPT.UI.StyleEntry(entry)
@@ -69,10 +77,30 @@ function DDRPT.UI.StyleEntry(entry)
     if entry.SetCursorColor then
         entry:SetCursorColor(DDRPT.UI.Colors.Text)
     end
+    if entry.SetPlaceholderText then
+        local original = entry.SetPlaceholderText
+        entry.SetPlaceholderText = function(self, text)
+            self.DDRPT_Placeholder = text
+            original(self, text)
+        end
+        if entry.GetPlaceholderText then
+            entry.DDRPT_Placeholder = entry:GetPlaceholderText()
+        end
+    end
     entry.Paint = function(self, w, h)
         draw.RoundedBox(4, 0, 0, w, h, DDRPT.UI.Colors.Accent)
         if self.DrawTextEntryText then
-            self:DrawTextEntryText(DDRPT.UI.Colors.Text, DDRPT.UI.Colors.Text, DDRPT.UI.Colors.Text)
+            local textColor = DDRPT.UI.Colors.Text
+            if self.GetValue and self:GetValue() == "" then
+                textColor = DDRPT.UI.Colors.Placeholder
+            end
+            self:DrawTextEntryText(textColor, DDRPT.UI.Colors.Text, DDRPT.UI.Colors.Text)
+        else
+            local value = self.GetText and self:GetText() or ""
+            if value == "" then
+                value = self.DDRPT_Placeholder or ""
+            end
+            draw.SimpleText(value, "DDRPT_Label", 8, h * 0.5, DDRPT.UI.Colors.Placeholder, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
         end
     end
 end
@@ -80,6 +108,7 @@ end
 function DDRPT.UI.StyleButton(button)
     if not IsValid(button) then return end
     button:SetTextColor(DDRPT.UI.Colors.Text)
+    button:SetFont("DDRPT_Label")
     button.Paint = function(self, w, h)
         local color = self:IsHovered() and DDRPT.UI.Colors.Accent or DDRPT.UI.Colors.Panel
         draw.RoundedBox(4, 0, 0, w, h, color)
@@ -96,6 +125,9 @@ function DDRPT.UI.StyleList(list)
         if IsValid(column) then
             if column.SetTextColor then
                 column:SetTextColor(DDRPT.UI.Colors.Text)
+            end
+            if column.SetFont then
+                column:SetFont("DDRPT_Label")
             end
         end
     end
@@ -116,4 +148,13 @@ function DDRPT.UI.AddListLine(list, ...)
         end
     end
     return line
+end
+
+function DDRPT.UI.CreateLabel(parent, text, x, y)
+    local label = vgui.Create("DLabel", parent)
+    label:SetText(text)
+    label:SetPos(x, y)
+    label:SizeToContents()
+    DDRPT.UI.StyleLabel(label)
+    return label
 end
