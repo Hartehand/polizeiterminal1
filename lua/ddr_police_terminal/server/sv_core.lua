@@ -26,7 +26,10 @@ function DDRPT:HasAccess(ply)
             DDRPT.Config.RefreshTeams()
         end
     end
-    return DDRPT.Config.AccessTeams[ply:Team()] == true
+    local teamId = ply:Team()
+    local teamName = team.GetName(teamId)
+    return DDRPT.Config.AccessTeams[teamId] == true
+        or (teamName and DDRPT.Config.AccessTeams[teamName] == true)
 end
 
 function DDRPT:GetRoleGroup(ply)
@@ -60,8 +63,15 @@ hook.Add("PlayerDisconnected", "DDRPT_RateLimitCleanup", function(ply)
     DDRPT.RateLimits[ply] = nil
 end)
 
-function DDRPT:SendOpenTerminal(ply)
-    net.Start(NET.OpenTerminal)
+function DDRPT:SendOpenTerminalPrompt(ply)
+    net.Start(NET.OpenTerminalPrompt)
+    net.Send(ply)
+end
+
+function DDRPT:SendOpenTerminalResult(ply, allowed, reason)
+    net.Start(NET.OpenTerminalResult)
+    net.WriteBool(allowed)
+    net.WriteString(reason or "")
     net.Send(ply)
 end
 
@@ -249,16 +259,21 @@ end)
 
 hook.Add("PlayerUse", "DDRPT_TerminalUse", function(ply, ent)
     if not IsValid(ent) or ent:GetClass() ~= "ddr_polizeiterminal" then return end
-    if not DDRPT:HasAccess(ply) then
-        ent.NextDenied = ent.NextDenied or {}
-        ent.NextDenied[ply] = ent.NextDenied[ply] or 0
-        if CurTime() < ent.NextDenied[ply] then return end
-        ent.NextDenied[ply] = CurTime() + 2
-        DDRPT:Notify(ply, "Kein Zugriff auf das Polizei-Terminal.")
-        return false
-    end
-    DDRPT:SendOpenTerminal(ply)
+    ent.NextPrompt = ent.NextPrompt or {}
+    ent.NextPrompt[ply] = ent.NextPrompt[ply] or 0
+    if CurTime() < ent.NextPrompt[ply] then return false end
+    ent.NextPrompt[ply] = CurTime() + 0.5
+    DDRPT:SendOpenTerminalPrompt(ply)
     return false
+end)
+
+net.Receive(NET.OpenTerminalRequest, function(len, ply)
+    if not IsValid(ply) then return end
+    if DDRPT:HasAccess(ply) then
+        DDRPT:SendOpenTerminalResult(ply, true, "")
+    else
+        DDRPT:SendOpenTerminalResult(ply, false, "Kein Zugriff auf das Polizei-Terminal.")
+    end
 end)
 
 hook.Add("PlayerInitialSpawn", "DDRPT_BoloLoginNotice", function(ply)

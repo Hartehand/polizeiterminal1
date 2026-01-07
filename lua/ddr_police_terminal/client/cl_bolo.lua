@@ -95,7 +95,7 @@ function DDRPT.UI.BuildBoloTab()
     for _, level in ipairs(DDRPT.Config.BoloDangerLevels) do
         dangerCombo:AddChoice(level)
     end
-    dangerCombo:SetValue(DDRPT.Config.BoloDangerLevels[1])
+    DDRPT.UI.SetComboPlaceholder(dangerCombo, "Bitte wählen...")
     DDRPT.UI.StyleEntry(dangerCombo)
 
     DDRPT.UI.CreateLabel(createPanel, "Grund", 8, 40)

@@ -162,7 +162,7 @@ function DDRPT.UI.BuildCasesTab()
     for _, status in ipairs(DDRPT.Config.ReportStatuses) do
         statusEntry:AddChoice(status)
     end
-    statusEntry:SetValue("Neu")
+    DDRPT.UI.SetComboPlaceholder(statusEntry, "Bitte wählen...")
     DDRPT.UI.StyleEntry(statusEntry)
 
     DDRPT.UI.CreateLabel(createPanel, "Beschreibung", 8, 40)

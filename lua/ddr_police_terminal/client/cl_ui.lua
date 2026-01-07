@@ -54,8 +54,19 @@ function DDRPT.UI:OpenTerminal()
     sheet:AddSheet("Inhaftierungen", DDRPT.UI.BuildIncarcerationsTab())
 end
 
-net.Receive(NET.OpenTerminal, function()
-    DDRPT.UI:OpenTerminal()
+net.Receive(NET.OpenTerminalPrompt, function()
+    net.Start(NET.OpenTerminalRequest)
+    net.SendToServer()
+end)
+
+net.Receive(NET.OpenTerminalResult, function()
+    local allowed = net.ReadBool()
+    local reason = net.ReadString()
+    if allowed then
+        DDRPT.UI:OpenTerminal()
+    else
+        notify(reason ~= "" and reason or "Kein Zugriff auf das Terminal.")
+    end
 end)
 
 function DDRPT.UI.ApplyPanelStyle(panel)
@@ -96,11 +107,20 @@ function DDRPT.UI.StyleEntry(entry)
             end
             self:DrawTextEntryText(textColor, DDRPT.UI.Colors.Text, DDRPT.UI.Colors.Text)
         else
-            local value = self.GetText and self:GetText() or ""
+            local value = ""
+            if self.GetValue then
+                value = self:GetValue() or ""
+            elseif self.GetText then
+                value = self:GetText() or ""
+            end
+            local color = DDRPT.UI.Colors.Text
             if value == "" then
                 value = self.DDRPT_Placeholder or ""
+                color = DDRPT.UI.Colors.Placeholder
+            elseif self.DDRPT_Placeholder and value == self.DDRPT_Placeholder then
+                color = DDRPT.UI.Colors.Placeholder
             end
-            draw.SimpleText(value, "DDRPT_Label", 8, h * 0.5, DDRPT.UI.Colors.Placeholder, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+            draw.SimpleText(value, "DDRPT_Label", 8, h * 0.5, color, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
         end
     end
 end
@@ -131,6 +151,13 @@ function DDRPT.UI.StyleList(list)
             end
         end
     end
+    local header = list:GetHeader()
+    if IsValid(header) then
+        header:SetTall(26)
+        header.Paint = function(self, w, h)
+            draw.RoundedBox(0, 0, 0, w, h, DDRPT.UI.Colors.Accent)
+        end
+    end
 end
 
 function DDRPT.UI.AddListLine(list, ...)
@@ -141,7 +168,9 @@ function DDRPT.UI.AddListLine(list, ...)
             line:SetTextColor(DDRPT.UI.Colors.Text)
         end
         line.Paint = function(self, w, h)
-            draw.RoundedBox(0, 0, 0, w, h, Color(0, 0, 0, 0))
+            local isSelected = self:IsSelected()
+            local bg = isSelected and Color(120, 120, 120, 160) or Color(0, 0, 0, 0)
+            draw.RoundedBox(0, 0, 0, w, h, bg)
             if self.SetTextColor then
                 self:SetTextColor(DDRPT.UI.Colors.Text)
             end
@@ -157,4 +186,12 @@ function DDRPT.UI.CreateLabel(parent, text, x, y)
     label:SizeToContents()
     DDRPT.UI.StyleLabel(label)
     return label
+end
+
+function DDRPT.UI.SetComboPlaceholder(combo, text)
+    if not IsValid(combo) then return end
+    combo.DDRPT_Placeholder = text
+    if combo.SetValue then
+        combo:SetValue(text)
+    end
 end

@@ -1,6 +1,8 @@
 DDRPT = DDRPT or {}
 DDRPT.Net = {
-    OpenTerminal = "ddrpt_open_terminal",
+    OpenTerminalPrompt = "DDRPT_OpenTerminal_Prompt",
+    OpenTerminalRequest = "DDRPT_OpenTerminal",
+    OpenTerminalResult = "DDRPT_OpenTerminal_Result",
     ReportListRequest = "ddrpt_report_list_req",
     ReportListResponse = "ddrpt_report_list_res",
     ReportCreateRequest = "ddrpt_report_create_req",

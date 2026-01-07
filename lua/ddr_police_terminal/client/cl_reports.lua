@@ -25,6 +25,7 @@ function DDRPT.UI.BuildReportsTab()
     statusCombo:SetPos(8, 26)
     statusCombo:SetSize(140, 22)
     DDRPT.UI.StyleEntry(statusCombo)
+    DDRPT.UI.SetComboPlaceholder(statusCombo, "Bitte wählen...")
     statusCombo:AddChoice("")
     for _, status in ipairs(DDRPT.Config.ReportStatuses) do
         statusCombo:AddChoice(status)
@@ -35,6 +36,7 @@ function DDRPT.UI.BuildReportsTab()
     categoryCombo:SetPos(160, 26)
     categoryCombo:SetSize(160, 22)
     DDRPT.UI.StyleEntry(categoryCombo)
+    DDRPT.UI.SetComboPlaceholder(categoryCombo, "Bitte wählen...")
     categoryCombo:AddChoice("")
     for _, cat in ipairs(DDRPT.Config.ReportCategories) do
         categoryCombo:AddChoice(cat)
@@ -321,6 +323,7 @@ function DDRPT.UI.BuildReportsTab()
     categoryCreate:SetPos(310, 16)
     categoryCreate:SetSize(140, 22)
     DDRPT.UI.StyleEntry(categoryCreate)
+    DDRPT.UI.SetComboPlaceholder(categoryCreate, "Bitte wählen...")
     for _, cat in ipairs(DDRPT.Config.ReportCategories) do
         categoryCreate:AddChoice(cat)
     end
@@ -360,6 +363,7 @@ function DDRPT.UI.BuildReportsTab()
     priorityCombo:SetPos(430, 138)
     priorityCombo:SetSize(120, 22)
     DDRPT.UI.StyleEntry(priorityCombo)
+    DDRPT.UI.SetComboPlaceholder(priorityCombo, "Bitte wählen...")
     for _, prio in ipairs(DDRPT.Config.PriorityLevels) do
         priorityCombo:AddChoice(prio)
     end
