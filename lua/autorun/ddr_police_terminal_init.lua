@@ -16,6 +16,7 @@ if SERVER then
     AddCSLuaFile("ddr_police_terminal/client/cl_duty.lua")
     AddCSLuaFile("ddr_police_terminal/client/cl_border.lua")
     AddCSLuaFile("ddr_police_terminal/client/cl_customs.lua")
+    AddCSLuaFile("ddr_police_terminal/client/cl_incarcerations.lua")
 
     include("ddr_police_terminal/server/sv_mysql.lua")
     include("ddr_police_terminal/server/sv_core.lua")
@@ -27,6 +28,7 @@ if SERVER then
     include("ddr_police_terminal/server/sv_duty.lua")
     include("ddr_police_terminal/server/sv_border.lua")
     include("ddr_police_terminal/server/sv_customs.lua")
+    include("ddr_police_terminal/server/sv_incarcerations.lua")
 else
     include("ddr_police_terminal/client/cl_ui.lua")
     include("ddr_police_terminal/client/cl_reports.lua")
@@ -37,4 +39,5 @@ else
     include("ddr_police_terminal/client/cl_duty.lua")
     include("ddr_police_terminal/client/cl_border.lua")
     include("ddr_police_terminal/client/cl_customs.lua")
+    include("ddr_police_terminal/client/cl_incarcerations.lua")
 end

@@ -200,6 +200,19 @@ function DDRPT:EnsureTables()
             created_at DATETIME NOT NULL,
             INDEX idx_customs_person (person_name)
         )]],
+        [[CREATE TABLE IF NOT EXISTS ddr_incarcerations (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            subject_name VARCHAR(128) NOT NULL,
+            reason TEXT NOT NULL,
+            duration_minutes INT NOT NULL,
+            case_id INT DEFAULT NULL,
+            report_id INT DEFAULT NULL,
+            officers TEXT NOT NULL,
+            created_by VARCHAR(32) NOT NULL,
+            created_at DATETIME NOT NULL,
+            INDEX idx_incarceration_case (case_id),
+            INDEX idx_incarceration_report (report_id)
+        )]],
     }
 
     for _, sql in ipairs(queries) do

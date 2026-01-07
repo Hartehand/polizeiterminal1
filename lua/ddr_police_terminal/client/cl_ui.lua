@@ -44,6 +44,7 @@ function DDRPT.UI:OpenTerminal()
     sheet:AddSheet("Dienstbuch", DDRPT.UI.BuildDutyTab())
     sheet:AddSheet("Grenzkontrolle", DDRPT.UI.BuildBorderTab())
     sheet:AddSheet("Zoll", DDRPT.UI.BuildCustomsTab())
+    sheet:AddSheet("Inhaftierungen", DDRPT.UI.BuildIncarcerationsTab())
 end
 
 net.Receive(NET.OpenTerminal, function()

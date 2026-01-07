@@ -33,5 +33,8 @@ DDRPT.Net = {
     CustomsListRequest = "ddrpt_customs_list_req",
     CustomsListResponse = "ddrpt_customs_list_res",
     CustomsCreateRequest = "ddrpt_customs_create_req",
+    IncarcerationListRequest = "ddrpt_incarceration_list_req",
+    IncarcerationListResponse = "ddrpt_incarceration_list_res",
+    IncarcerationCreateRequest = "ddrpt_incarceration_create_req",
     Notify = "ddrpt_notify",
 }

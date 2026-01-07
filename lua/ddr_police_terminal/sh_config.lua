@@ -32,6 +32,7 @@ DDRPT.Config.RoleGroups = {
             canManageDutyLog = true,
             canManageBorder = true,
             canManageCustoms = true,
+            canManageIncarcerations = true,
         },
     },
     VP_LEITUNG = {
@@ -50,6 +51,7 @@ DDRPT.Config.RoleGroups = {
             canManageDutyLog = true,
             canManageBorder = true,
             canManageCustoms = true,
+            canManageIncarcerations = true,
         },
     },
     MFS = {
@@ -68,6 +70,7 @@ DDRPT.Config.RoleGroups = {
             canManageDutyLog = true,
             canManageBorder = true,
             canManageCustoms = true,
+            canManageIncarcerations = true,
         },
     },
 }
@@ -115,6 +118,7 @@ DDRPT.Config.Pagination = {
     Duty = 25,
     Border = 20,
     Customs = 20,
+    Incarcerations = 20,
     PeopleNotes = 20,
     Bolos = 20,
 }
@@ -140,6 +144,8 @@ DDRPT.Config.NetRateLimits = {
     createBorder = 0.5,
     listCustoms = 0.5,
     createCustoms = 0.5,
+    listIncarcerations = 0.5,
+    createIncarcerations = 0.5,
 }
 
 DDRPT.Config.Notifications = {
