@@ -11,6 +11,24 @@ local function addTeam(list, teamId)
     end
 end
 
+function DDRPT.Config.RefreshTeams()
+    DDRPT.Config.AccessTeams = {}
+    DDRPT.Config.BorderAccessTeams = {}
+    DDRPT.Config.RoleGroups.VP.Teams = {}
+    DDRPT.Config.RoleGroups.VP_LEITUNG.Teams = {}
+    DDRPT.Config.RoleGroups.MFS.Teams = {}
+
+    addTeam(DDRPT.Config.AccessTeams, TEAM_POLICE)
+    addTeam(DDRPT.Config.AccessTeams, TEAM_CHIEF)
+
+    addTeam(DDRPT.Config.BorderAccessTeams, TEAM_POLICE)
+    addTeam(DDRPT.Config.BorderAccessTeams, TEAM_BORDER)
+
+    addTeam(DDRPT.Config.RoleGroups.VP.Teams, TEAM_POLICE)
+    addTeam(DDRPT.Config.RoleGroups.VP_LEITUNG.Teams, TEAM_CHIEF)
+    addTeam(DDRPT.Config.RoleGroups.MFS.Teams, TEAM_MFS)
+end
+
 DDRPT.Config.AccessTeams = {}
 addTeam(DDRPT.Config.AccessTeams, TEAM_POLICE)
 addTeam(DDRPT.Config.AccessTeams, TEAM_CHIEF)

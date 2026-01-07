@@ -224,6 +224,18 @@ hook.Add("DDRPT_DB_Connected", "DDRPT_CreateTables", function()
     DDRPT:EnsureTables()
 end)
 
+hook.Add("InitPostEntity", "DDRPT_RefreshTeams", function()
+    if DDRPT.Config and DDRPT.Config.RefreshTeams then
+        DDRPT.Config.RefreshTeams()
+    end
+end)
+
+hook.Add("DarkRPFinishedLoading", "DDRPT_RefreshTeams_DarkRP", function()
+    if DDRPT.Config and DDRPT.Config.RefreshTeams then
+        DDRPT.Config.RefreshTeams()
+    end
+end)
+
 hook.Add("PlayerUse", "DDRPT_TerminalUse", function(ply, ent)
     if not IsValid(ent) or ent:GetClass() ~= "ddr_polizeiterminal" then return end
     if not DDRPT:HasAccess(ply) then

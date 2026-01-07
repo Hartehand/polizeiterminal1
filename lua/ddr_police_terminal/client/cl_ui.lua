@@ -94,7 +94,9 @@ function DDRPT.UI.StyleList(list)
     end
     for _, column in ipairs(list.Columns or {}) do
         if IsValid(column) then
-            column:SetTextColor(DDRPT.UI.Colors.Text)
+            if column.SetTextColor then
+                column:SetTextColor(DDRPT.UI.Colors.Text)
+            end
         end
     end
 end
