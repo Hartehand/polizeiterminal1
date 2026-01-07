@@ -190,6 +190,16 @@ function DDRPT:EnsureTables()
             created_at DATETIME NOT NULL,
             INDEX idx_border_person (person_name)
         )]],
+        [[CREATE TABLE IF NOT EXISTS ddr_customs (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            person_name VARCHAR(128) NOT NULL,
+            origin VARCHAR(64) NOT NULL,
+            declaration TEXT NOT NULL,
+            duty_paid TINYINT(1) NOT NULL DEFAULT 0,
+            created_by VARCHAR(32) NOT NULL,
+            created_at DATETIME NOT NULL,
+            INDEX idx_customs_person (person_name)
+        )]],
     }
 
     for _, sql in ipairs(queries) do

@@ -5,22 +5,26 @@ local function buildLabel(parent, text)
     local lbl = vgui.Create("DLabel", parent)
     lbl:SetText(text)
     lbl:SizeToContents()
+    DDRPT.UI.StyleLabel(lbl)
     return lbl
 end
 
 function DDRPT.UI.BuildReportsTab()
     local panel = vgui.Create("DPanel")
     panel:DockPadding(8, 8, 8, 8)
+    DDRPT.UI.ApplyPanelStyle(panel)
 
     local filterPanel = vgui.Create("DPanel", panel)
     filterPanel:Dock(TOP)
     filterPanel:SetTall(60)
     filterPanel:DockMargin(0, 0, 0, 8)
+    DDRPT.UI.ApplyPanelStyle(filterPanel)
 
     buildLabel(filterPanel, "Status"):SetPos(8, 8)
     local statusCombo = vgui.Create("DComboBox", filterPanel)
     statusCombo:SetPos(8, 26)
     statusCombo:SetSize(140, 22)
+    DDRPT.UI.StyleEntry(statusCombo)
     statusCombo:AddChoice("")
     for _, status in ipairs(DDRPT.Config.ReportStatuses) do
         statusCombo:AddChoice(status)
@@ -30,6 +34,7 @@ function DDRPT.UI.BuildReportsTab()
     local categoryCombo = vgui.Create("DComboBox", filterPanel)
     categoryCombo:SetPos(160, 26)
     categoryCombo:SetSize(160, 22)
+    DDRPT.UI.StyleEntry(categoryCombo)
     categoryCombo:AddChoice("")
     for _, cat in ipairs(DDRPT.Config.ReportCategories) do
         categoryCombo:AddChoice(cat)
@@ -39,11 +44,13 @@ function DDRPT.UI.BuildReportsTab()
     local accusedEntry = vgui.Create("DTextEntry", filterPanel)
     accusedEntry:SetPos(330, 26)
     accusedEntry:SetSize(180, 22)
+    DDRPT.UI.StyleEntry(accusedEntry)
 
     buildLabel(filterPanel, "Vorgang"):SetPos(520, 8)
     local reportNoEntry = vgui.Create("DTextEntry", filterPanel)
     reportNoEntry:SetPos(520, 26)
     reportNoEntry:SetSize(160, 22)
+    DDRPT.UI.StyleEntry(reportNoEntry)
 
     local list = vgui.Create("DListView", panel)
     list:Dock(FILL)
@@ -54,11 +61,13 @@ function DDRPT.UI.BuildReportsTab()
     list:AddColumn("Beschuldigter")
     list:AddColumn("Priorität")
     list:AddColumn("Datum")
+    DDRPT.UI.StyleList(list)
 
     local pagination = vgui.Create("DPanel", panel)
     pagination:Dock(BOTTOM)
     pagination:SetTall(40)
     pagination:DockMargin(0, 8, 0, 0)
+    DDRPT.UI.ApplyPanelStyle(pagination)
 
     local page = 1
     local total = 0
@@ -67,16 +76,19 @@ function DDRPT.UI.BuildReportsTab()
     pageLabel:SetPos(8, 12)
     pageLabel:SetText("Seite 1")
     pageLabel:SizeToContents()
+    DDRPT.UI.StyleLabel(pageLabel)
 
     local prevBtn = vgui.Create("DButton", pagination)
     prevBtn:SetPos(120, 8)
     prevBtn:SetSize(80, 24)
     prevBtn:SetText("Zurück")
+    DDRPT.UI.StyleButton(prevBtn)
 
     local nextBtn = vgui.Create("DButton", pagination)
     nextBtn:SetPos(210, 8)
     nextBtn:SetSize(80, 24)
     nextBtn:SetText("Weiter")
+    DDRPT.UI.StyleButton(nextBtn)
 
     local function requestList()
         local filters = {
@@ -109,6 +121,7 @@ function DDRPT.UI.BuildReportsTab()
     refreshBtn:SetPos(690, 24)
     refreshBtn:SetSize(80, 24)
     refreshBtn:SetText("Suchen")
+    DDRPT.UI.StyleButton(refreshBtn)
     refreshBtn.DoClick = function()
         page = 1
         requestList()
@@ -129,7 +142,7 @@ function DDRPT.UI.BuildReportsTab()
         local rows = net.ReadTable() or {}
         list:Clear()
         for _, row in ipairs(rows) do
-            list:AddLine(row.id, row.report_no or "", row.category or "", row.status or "", row.accused_name or "", row.priority or "", row.created_at or "")
+            DDRPT.UI.AddListLine(list, row.id, row.report_no or "", row.category or "", row.status or "", row.accused_name or "", row.priority or "", row.created_at or "")
         end
         pageLabel:SetText(string.format("Seite %d (%d Einträge)", page, total))
         pageLabel:SizeToContents()
@@ -145,6 +158,9 @@ function DDRPT.UI.BuildReportsTab()
         detail:Center()
         detail:SetTitle("Anzeige " .. (report.report_no or ""))
         detail:MakePopup()
+        detail.Paint = function(self, w, h)
+            draw.RoundedBox(8, 0, 0, w, h, DDRPT.UI.Colors.Background)
+        end
 
         local scroll = vgui.Create("DScrollPanel", detail)
         scroll:Dock(FILL)
@@ -170,6 +186,7 @@ function DDRPT.UI.BuildReportsTab()
             report.witnesses or "",
             report.evidence or ""
         ))
+        DDRPT.UI.StyleLabel(infoText)
 
         local updatePanel = vgui.Create("DPanel", scroll)
         updatePanel:Dock(TOP)
@@ -188,11 +205,13 @@ function DDRPT.UI.BuildReportsTab()
         assigneeEntry:SetPos(160, 20)
         assigneeEntry:SetSize(160, 22)
         assigneeEntry:SetText(report.assignee or "")
+        DDRPT.UI.StyleEntry(assigneeEntry)
 
         local updateBtn = vgui.Create("DButton", updatePanel)
         updateBtn:SetPos(330, 18)
         updateBtn:SetSize(80, 26)
         updateBtn:SetText("Aktualisieren")
+        DDRPT.UI.StyleButton(updateBtn)
         updateBtn.DoClick = function()
             net.Start(NET.ReportUpdateRequest)
             net.WriteUInt(report.id or 0, 32)
@@ -207,12 +226,16 @@ function DDRPT.UI.BuildReportsTab()
         printBtn:SetPos(420, 18)
         printBtn:SetSize(80, 26)
         printBtn:SetText("Drucken")
+        DDRPT.UI.StyleButton(printBtn)
         printBtn.DoClick = function()
             local printFrame = vgui.Create("DFrame")
             printFrame:SetSize(600, 500)
             printFrame:Center()
             printFrame:SetTitle("Druckansicht")
             printFrame:MakePopup()
+            printFrame.Paint = function(self, w, h)
+                draw.RoundedBox(8, 0, 0, w, h, DDRPT.UI.Colors.Background)
+            end
             local label = vgui.Create("DLabel", printFrame)
             label:SetPos(12, 36)
             label:SetSize(580, 450)
@@ -222,6 +245,7 @@ function DDRPT.UI.BuildReportsTab()
                 report.report_no or "",
                 report.description or ""
             ))
+            DDRPT.UI.StyleLabel(label)
         end
 
         local commentPanel = vgui.Create("DPanel", scroll)
@@ -232,10 +256,12 @@ function DDRPT.UI.BuildReportsTab()
         local commentEntry = vgui.Create("DTextEntry", commentPanel)
         commentEntry:SetPos(8, 8)
         commentEntry:SetSize(500, 24)
+        DDRPT.UI.StyleEntry(commentEntry)
         local commentBtn = vgui.Create("DButton", commentPanel)
         commentBtn:SetPos(520, 8)
         commentBtn:SetSize(120, 24)
         commentBtn:SetText("Kommentar")
+        DDRPT.UI.StyleButton(commentBtn)
         commentBtn.DoClick = function()
             if commentEntry:GetValue() == "" then return end
             net.Start(NET.ReportCommentRequest)
@@ -251,8 +277,9 @@ function DDRPT.UI.BuildReportsTab()
         commentsList:AddColumn("Datum")
         commentsList:AddColumn("Autor")
         commentsList:AddColumn("Kommentar")
+        DDRPT.UI.StyleList(commentsList)
         for _, comment in ipairs(comments) do
-            commentsList:AddLine(comment.created_at or "", comment.author or "", comment.comment or "")
+            DDRPT.UI.AddListLine(commentsList, comment.created_at or "", comment.author or "", comment.comment or "")
         end
 
         local auditList = vgui.Create("DListView", scroll)
@@ -261,8 +288,9 @@ function DDRPT.UI.BuildReportsTab()
         auditList:AddColumn("Datum")
         auditList:AddColumn("Aktion")
         auditList:AddColumn("Bearbeiter")
+        DDRPT.UI.StyleList(auditList)
         for _, audit in ipairs(audits) do
-            auditList:AddLine(audit.created_at or "", audit.action or "", audit.actor or "")
+            DDRPT.UI.AddListLine(auditList, audit.created_at or "", audit.action or "", audit.actor or "")
         end
     end)
 
@@ -270,20 +298,24 @@ function DDRPT.UI.BuildReportsTab()
     createPanel:Dock(BOTTOM)
     createPanel:SetTall(200)
     createPanel:DockMargin(0, 8, 0, 0)
+    DDRPT.UI.ApplyPanelStyle(createPanel)
 
     local reporterEntry = vgui.Create("DTextEntry", createPanel)
     reporterEntry:SetPos(8, 8)
     reporterEntry:SetSize(140, 22)
     reporterEntry:SetPlaceholderText("Anzeigender")
+    DDRPT.UI.StyleEntry(reporterEntry)
 
     local accusedEntry2 = vgui.Create("DTextEntry", createPanel)
     accusedEntry2:SetPos(160, 8)
     accusedEntry2:SetSize(140, 22)
     accusedEntry2:SetPlaceholderText("Beschuldigter")
+    DDRPT.UI.StyleEntry(accusedEntry2)
 
     local categoryCreate = vgui.Create("DComboBox", createPanel)
     categoryCreate:SetPos(310, 8)
     categoryCreate:SetSize(140, 22)
+    DDRPT.UI.StyleEntry(categoryCreate)
     for _, cat in ipairs(DDRPT.Config.ReportCategories) do
         categoryCreate:AddChoice(cat)
     end
@@ -293,26 +325,31 @@ function DDRPT.UI.BuildReportsTab()
     locationEntry:SetPos(460, 8)
     locationEntry:SetSize(140, 22)
     locationEntry:SetPlaceholderText("Tatort")
+    DDRPT.UI.StyleEntry(locationEntry)
 
     local descriptionEntry = vgui.Create("DTextEntry", createPanel)
     descriptionEntry:SetPos(8, 40)
     descriptionEntry:SetSize(592, 60)
     descriptionEntry:SetMultiline(true)
     descriptionEntry:SetPlaceholderText("Beschreibung")
+    DDRPT.UI.StyleEntry(descriptionEntry)
 
     local witnessesEntry = vgui.Create("DTextEntry", createPanel)
     witnessesEntry:SetPos(8, 110)
     witnessesEntry:SetSize(200, 22)
     witnessesEntry:SetPlaceholderText("Zeugen")
+    DDRPT.UI.StyleEntry(witnessesEntry)
 
     local evidenceEntry = vgui.Create("DTextEntry", createPanel)
     evidenceEntry:SetPos(220, 110)
     evidenceEntry:SetSize(200, 22)
     evidenceEntry:SetPlaceholderText("Beweismittel")
+    DDRPT.UI.StyleEntry(evidenceEntry)
 
     local priorityCombo = vgui.Create("DComboBox", createPanel)
     priorityCombo:SetPos(430, 110)
     priorityCombo:SetSize(120, 22)
+    DDRPT.UI.StyleEntry(priorityCombo)
     for _, prio in ipairs(DDRPT.Config.PriorityLevels) do
         priorityCombo:AddChoice(prio)
     end
@@ -322,6 +359,7 @@ function DDRPT.UI.BuildReportsTab()
     createBtn:SetPos(560, 110)
     createBtn:SetSize(120, 26)
     createBtn:SetText("Anzeige anlegen")
+    DDRPT.UI.StyleButton(createBtn)
     createBtn.DoClick = function()
         net.Start(NET.ReportCreateRequest)
         net.WriteTable({

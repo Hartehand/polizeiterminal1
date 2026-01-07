@@ -91,3 +91,26 @@ net.Receive(NET.CaseDetailRequest, function(len, ply)
         end)
     end)
 end)
+
+net.Receive(NET.CaseUpdateRequest, function(len, ply)
+    if not DDRPT:HasPermission(ply, "canManageCases") then return end
+    if not DDRPT:CheckRate(ply, "caseUpdate") then return end
+
+    local caseId = net.ReadUInt(32)
+    local updates = net.ReadTable() or {}
+
+    local fields = {}
+    if updates.status then
+        table.insert(fields, "status='" .. DB:Escape(updates.status) .. "'")
+    end
+    if updates.description then
+        table.insert(fields, "description='" .. DB:Escape(updates.description) .. "'")
+    end
+    if #fields == 0 then return end
+
+    local sql = "UPDATE ddr_cases SET " .. table.concat(fields, ", ") .. ", updated_at='" .. now() .. "' WHERE id=" .. tonumber(caseId)
+    DB:Query(sql, function(ok)
+        if not ok then return end
+        DDRPT:Notify(ply, "Akte aktualisiert.")
+    end)
+end)

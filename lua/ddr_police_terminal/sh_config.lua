@@ -31,6 +31,7 @@ DDRPT.Config.RoleGroups = {
             canManageEvidence = true,
             canManageDutyLog = true,
             canManageBorder = true,
+            canManageCustoms = true,
         },
     },
     VP_LEITUNG = {
@@ -48,6 +49,7 @@ DDRPT.Config.RoleGroups = {
             canManageEvidence = true,
             canManageDutyLog = true,
             canManageBorder = true,
+            canManageCustoms = true,
         },
     },
     MFS = {
@@ -65,6 +67,7 @@ DDRPT.Config.RoleGroups = {
             canManageEvidence = true,
             canManageDutyLog = true,
             canManageBorder = true,
+            canManageCustoms = true,
         },
     },
 }
@@ -111,6 +114,7 @@ DDRPT.Config.Pagination = {
     Evidence = 20,
     Duty = 25,
     Border = 20,
+    Customs = 20,
     PeopleNotes = 20,
     Bolos = 20,
 }
@@ -123,6 +127,7 @@ DDRPT.Config.NetRateLimits = {
     addComment = 0.5,
     listCases = 0.5,
     createCase = 1,
+    caseUpdate = 0.5,
     listPeople = 0.5,
     addPersonNote = 0.5,
     listBolos = 0.5,
@@ -133,6 +138,8 @@ DDRPT.Config.NetRateLimits = {
     createDuty = 0.5,
     listBorder = 0.5,
     createBorder = 0.5,
+    listCustoms = 0.5,
+    createCustoms = 0.5,
 }
 
 DDRPT.Config.Notifications = {

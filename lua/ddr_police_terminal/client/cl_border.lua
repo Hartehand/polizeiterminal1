@@ -4,6 +4,7 @@ local NET = DDRPT.Net
 function DDRPT.UI.BuildBorderTab()
     local panel = vgui.Create("DPanel")
     panel:DockPadding(8, 8, 8, 8)
+    DDRPT.UI.ApplyPanelStyle(panel)
 
     local list = vgui.Create("DListView", panel)
     list:Dock(FILL)
@@ -12,6 +13,7 @@ function DDRPT.UI.BuildBorderTab()
     list:AddColumn("Dokument")
     list:AddColumn("Ergebnis")
     list:AddColumn("Grund")
+    DDRPT.UI.StyleList(list)
 
     local page = 1
     local total = 0
@@ -20,21 +22,25 @@ function DDRPT.UI.BuildBorderTab()
     pagination:Dock(BOTTOM)
     pagination:SetTall(40)
     pagination:DockMargin(0, 8, 0, 0)
+    DDRPT.UI.ApplyPanelStyle(pagination)
 
     local pageLabel = vgui.Create("DLabel", pagination)
     pageLabel:SetPos(8, 12)
     pageLabel:SetText("Seite 1")
     pageLabel:SizeToContents()
+    DDRPT.UI.StyleLabel(pageLabel)
 
     local prevBtn = vgui.Create("DButton", pagination)
     prevBtn:SetPos(120, 8)
     prevBtn:SetSize(80, 24)
     prevBtn:SetText("Zurück")
+    DDRPT.UI.StyleButton(prevBtn)
 
     local nextBtn = vgui.Create("DButton", pagination)
     nextBtn:SetPos(210, 8)
     nextBtn:SetSize(80, 24)
     nextBtn:SetText("Weiter")
+    DDRPT.UI.StyleButton(nextBtn)
 
     local function requestList()
         net.Start(NET.BorderListRequest)
@@ -63,7 +69,7 @@ function DDRPT.UI.BuildBorderTab()
         local rows = net.ReadTable() or {}
         list:Clear()
         for _, row in ipairs(rows) do
-            list:AddLine(row.created_at or "", row.person_name or "", row.document_checked == 1 and "Ja" or "Nein", row.result or "", row.reason or "")
+            DDRPT.UI.AddListLine(list, row.created_at or "", row.person_name or "", row.document_checked == 1 and "Ja" or "Nein", row.result or "", row.reason or "")
         end
         pageLabel:SetText(string.format("Seite %d (%d Einträge)", page, total))
         pageLabel:SizeToContents()
@@ -73,42 +79,43 @@ function DDRPT.UI.BuildBorderTab()
     createPanel:Dock(BOTTOM)
     createPanel:SetTall(110)
     createPanel:DockMargin(0, 8, 0, 0)
+    DDRPT.UI.ApplyPanelStyle(createPanel)
 
     local nameEntry = vgui.Create("DTextEntry", createPanel)
     nameEntry:SetPos(8, 8)
     nameEntry:SetSize(160, 22)
     nameEntry:SetPlaceholderText("Person")
-
-    local steamEntry = vgui.Create("DTextEntry", createPanel)
-    steamEntry:SetPos(180, 8)
-    steamEntry:SetSize(160, 22)
-    steamEntry:SetPlaceholderText("SteamID64")
+    DDRPT.UI.StyleEntry(nameEntry)
 
     local docCheck = vgui.Create("DCheckBoxLabel", createPanel)
-    docCheck:SetPos(350, 10)
+    docCheck:SetPos(180, 10)
     docCheck:SetText("Dokument geprüft")
+    DDRPT.UI.StyleLabel(docCheck)
     docCheck:SizeToContents()
 
     local resultEntry = vgui.Create("DTextEntry", createPanel)
     resultEntry:SetPos(8, 36)
     resultEntry:SetSize(160, 22)
     resultEntry:SetPlaceholderText("Ergebnis")
+    DDRPT.UI.StyleEntry(resultEntry)
 
     local reasonEntry = vgui.Create("DTextEntry", createPanel)
     reasonEntry:SetPos(180, 36)
     reasonEntry:SetSize(280, 60)
     reasonEntry:SetMultiline(true)
     reasonEntry:SetPlaceholderText("Grund")
+    DDRPT.UI.StyleEntry(reasonEntry)
 
     local createBtn = vgui.Create("DButton", createPanel)
     createBtn:SetPos(470, 36)
     createBtn:SetSize(140, 24)
     createBtn:SetText("Eintrag erstellen")
+    DDRPT.UI.StyleButton(createBtn)
     createBtn.DoClick = function()
         net.Start(NET.BorderCreateRequest)
         net.WriteTable({
             person_name = nameEntry:GetValue(),
-            person_steamid64 = steamEntry:GetValue(),
+            person_steamid64 = "",
             document_checked = docCheck:GetChecked(),
             result = resultEntry:GetValue(),
             reason = reasonEntry:GetValue(),

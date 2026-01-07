@@ -14,6 +14,7 @@ DDRPT.Net = {
     CaseCreateRequest = "ddrpt_case_create_req",
     CaseDetailRequest = "ddrpt_case_detail_req",
     CaseDetailResponse = "ddrpt_case_detail_res",
+    CaseUpdateRequest = "ddrpt_case_update_req",
     PersonNotesRequest = "ddrpt_person_notes_req",
     PersonNotesResponse = "ddrpt_person_notes_res",
     PersonNoteCreateRequest = "ddrpt_person_note_create_req",
@@ -29,5 +30,8 @@ DDRPT.Net = {
     BorderListRequest = "ddrpt_border_list_req",
     BorderListResponse = "ddrpt_border_list_res",
     BorderCreateRequest = "ddrpt_border_create_req",
+    CustomsListRequest = "ddrpt_customs_list_req",
+    CustomsListResponse = "ddrpt_customs_list_res",
+    CustomsCreateRequest = "ddrpt_customs_create_req",
     Notify = "ddrpt_notify",
 }

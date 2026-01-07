@@ -4,6 +4,7 @@ local NET = DDRPT.Net
 function DDRPT.UI.BuildEvidenceTab()
     local panel = vgui.Create("DPanel")
     panel:DockPadding(8, 8, 8, 8)
+    DDRPT.UI.ApplyPanelStyle(panel)
 
     local list = vgui.Create("DListView", panel)
     list:Dock(FILL)
@@ -13,6 +14,7 @@ function DDRPT.UI.BuildEvidenceTab()
     list:AddColumn("Report")
     list:AddColumn("Case")
     list:AddColumn("Lagerort")
+    DDRPT.UI.StyleList(list)
 
     local page = 1
     local total = 0
@@ -21,21 +23,25 @@ function DDRPT.UI.BuildEvidenceTab()
     pagination:Dock(BOTTOM)
     pagination:SetTall(40)
     pagination:DockMargin(0, 8, 0, 0)
+    DDRPT.UI.ApplyPanelStyle(pagination)
 
     local pageLabel = vgui.Create("DLabel", pagination)
     pageLabel:SetPos(8, 12)
     pageLabel:SetText("Seite 1")
     pageLabel:SizeToContents()
+    DDRPT.UI.StyleLabel(pageLabel)
 
     local prevBtn = vgui.Create("DButton", pagination)
     prevBtn:SetPos(120, 8)
     prevBtn:SetSize(80, 24)
     prevBtn:SetText("Zurück")
+    DDRPT.UI.StyleButton(prevBtn)
 
     local nextBtn = vgui.Create("DButton", pagination)
     nextBtn:SetPos(210, 8)
     nextBtn:SetSize(80, 24)
     nextBtn:SetText("Weiter")
+    DDRPT.UI.StyleButton(nextBtn)
 
     local function requestList()
         net.Start(NET.EvidenceListRequest)
@@ -64,7 +70,7 @@ function DDRPT.UI.BuildEvidenceTab()
         local rows = net.ReadTable() or {}
         list:Clear()
         for _, row in ipairs(rows) do
-            list:AddLine(row.id, row.evidence_type or "", row.description or "", row.related_report or "", row.related_case or "", row.storage_location or "")
+            DDRPT.UI.AddListLine(list, row.id, row.evidence_type or "", row.description or "", row.related_report or "", row.related_case or "", row.storage_location or "")
         end
         pageLabel:SetText(string.format("Seite %d (%d Einträge)", page, total))
         pageLabel:SizeToContents()
@@ -74,41 +80,49 @@ function DDRPT.UI.BuildEvidenceTab()
     createPanel:Dock(BOTTOM)
     createPanel:SetTall(120)
     createPanel:DockMargin(0, 8, 0, 0)
+    DDRPT.UI.ApplyPanelStyle(createPanel)
 
     local typeEntry = vgui.Create("DTextEntry", createPanel)
     typeEntry:SetPos(8, 8)
     typeEntry:SetSize(120, 22)
     typeEntry:SetPlaceholderText("Typ")
+    DDRPT.UI.StyleEntry(typeEntry)
 
     local descEntry = vgui.Create("DTextEntry", createPanel)
     descEntry:SetPos(140, 8)
     descEntry:SetSize(260, 22)
     descEntry:SetPlaceholderText("Beschreibung")
+    DDRPT.UI.StyleEntry(descEntry)
 
     local reportEntry = vgui.Create("DTextEntry", createPanel)
     reportEntry:SetPos(410, 8)
     reportEntry:SetSize(80, 22)
     reportEntry:SetPlaceholderText("Report")
+    DDRPT.UI.StyleEntry(reportEntry)
 
     local caseEntry = vgui.Create("DTextEntry", createPanel)
     caseEntry:SetPos(500, 8)
     caseEntry:SetSize(80, 22)
     caseEntry:SetPlaceholderText("Case")
+    DDRPT.UI.StyleEntry(caseEntry)
 
     local storageEntry = vgui.Create("DTextEntry", createPanel)
     storageEntry:SetPos(8, 36)
     storageEntry:SetSize(200, 22)
     storageEntry:SetPlaceholderText("Lagerort")
+    DDRPT.UI.StyleEntry(storageEntry)
 
     local custodyEntry = vgui.Create("DTextEntry", createPanel)
     custodyEntry:SetPos(220, 36)
     custodyEntry:SetSize(200, 22)
     custodyEntry:SetPlaceholderText("Custody Note")
+    DDRPT.UI.StyleEntry(custodyEntry)
 
     local createBtn = vgui.Create("DButton", createPanel)
     createBtn:SetPos(430, 36)
     createBtn:SetSize(150, 24)
     createBtn:SetText("Beweis anlegen")
+    DDRPT.UI.StyleButton(createBtn)
     createBtn.DoClick = function()
         net.Start(NET.EvidenceCreateRequest)
         net.WriteTable({

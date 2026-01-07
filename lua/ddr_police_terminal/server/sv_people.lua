@@ -10,12 +10,20 @@ net.Receive(NET.PersonNotesRequest, function(len, ply)
     if not DDRPT:HasAccess(ply) then return end
     if not DDRPT:CheckRate(ply, "listPeople") then return end
 
-    local steamid64 = net.ReadString()
+    local search = net.ReadString()
     local page = math.max(net.ReadUInt(16), 1)
     local limit = DDRPT.Config.Pagination.PeopleNotes
     local offset = (page - 1) * limit
 
-    local where = "steamid64='" .. DB:Escape(steamid64) .. "'"
+    local where
+    if search == "" then
+        return
+    end
+    if string.match(search, "^%d+$") then
+        where = "steamid64='" .. DB:Escape(search) .. "'"
+    else
+        where = "person_name LIKE '%" .. DB:Escape(search) .. "%'"
+    end
     if not DDRPT:HasPermission(ply, "canViewSecretNote") then
         where = where .. " AND is_secret=0"
     end
