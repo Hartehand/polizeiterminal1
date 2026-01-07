@@ -65,10 +65,14 @@ end
 function DDRPT.UI.StyleEntry(entry)
     if not IsValid(entry) then return end
     entry:SetTextColor(DDRPT.UI.Colors.Text)
-    entry:SetCursorColor(DDRPT.UI.Colors.Text)
+    if entry.SetCursorColor then
+        entry:SetCursorColor(DDRPT.UI.Colors.Text)
+    end
     entry.Paint = function(self, w, h)
         draw.RoundedBox(4, 0, 0, w, h, DDRPT.UI.Colors.Accent)
-        self:DrawTextEntryText(DDRPT.UI.Colors.Text, DDRPT.UI.Colors.Text, DDRPT.UI.Colors.Text)
+        if self.DrawTextEntryText then
+            self:DrawTextEntryText(DDRPT.UI.Colors.Text, DDRPT.UI.Colors.Text, DDRPT.UI.Colors.Text)
+        end
     end
 end
 
