@@ -5,15 +5,20 @@ DDRPT.Config.AddonPrefix = "[DDR Polizei-Terminal]"
 DDRPT.Config.DepartmentName = "Volkspolizei Dienststelle Mitte"
 DDRPT.Config.PrintHeader = "Volkspolizei - Anzeige"
 
-DDRPT.Config.AccessTeams = {
-    [TEAM_POLICE] = true,
-    [TEAM_CHIEF] = true,
-}
+local function addTeam(list, teamId)
+    if teamId ~= nil then
+        list[teamId] = true
+    end
+end
+
+DDRPT.Config.AccessTeams = {}
+addTeam(DDRPT.Config.AccessTeams, TEAM_POLICE)
+addTeam(DDRPT.Config.AccessTeams, TEAM_CHIEF)
 
 DDRPT.Config.RoleGroups = {
     VP = {
         Teams = {
-            [TEAM_POLICE] = true,
+            -- Teams are populated safely below to avoid nil indices before DarkRP loads.
         },
         Permissions = {
             canCreateReport = true,
@@ -30,7 +35,7 @@ DDRPT.Config.RoleGroups = {
     },
     VP_LEITUNG = {
         Teams = {
-            [TEAM_CHIEF] = true,
+            -- Teams are populated safely below to avoid nil indices before DarkRP loads.
         },
         Permissions = {
             canCreateReport = true,
@@ -47,7 +52,7 @@ DDRPT.Config.RoleGroups = {
     },
     MFS = {
         Teams = {
-            [TEAM_MFS] = true,
+            -- Teams are populated safely below to avoid nil indices before DarkRP loads.
         },
         Permissions = {
             canCreateReport = true,
@@ -146,7 +151,10 @@ DDRPT.Config.DB = {
     Port = 3306,
 }
 
-DDRPT.Config.BorderAccessTeams = {
-    [TEAM_POLICE] = true,
-    [TEAM_BORDER] = true,
-}
+DDRPT.Config.BorderAccessTeams = {}
+addTeam(DDRPT.Config.BorderAccessTeams, TEAM_POLICE)
+addTeam(DDRPT.Config.BorderAccessTeams, TEAM_BORDER)
+
+addTeam(DDRPT.Config.RoleGroups.VP.Teams, TEAM_POLICE)
+addTeam(DDRPT.Config.RoleGroups.VP_LEITUNG.Teams, TEAM_CHIEF)
+addTeam(DDRPT.Config.RoleGroups.MFS.Teams, TEAM_MFS)
