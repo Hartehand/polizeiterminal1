@@ -12,11 +12,11 @@ local function addTeam(list, teamId)
 end
 
 function DDRPT.Config.RefreshTeams()
-    DDRPT.Config.AccessTeams = {}
-    DDRPT.Config.BorderAccessTeams = {}
-    DDRPT.Config.RoleGroups.VP.Teams = {}
-    DDRPT.Config.RoleGroups.VP_LEITUNG.Teams = {}
-    DDRPT.Config.RoleGroups.MFS.Teams = {}
+    DDRPT.Config.AccessTeams = DDRPT.Config.AccessTeams or {}
+    DDRPT.Config.BorderAccessTeams = DDRPT.Config.BorderAccessTeams or {}
+    DDRPT.Config.RoleGroups.VP.Teams = DDRPT.Config.RoleGroups.VP.Teams or {}
+    DDRPT.Config.RoleGroups.VP_LEITUNG.Teams = DDRPT.Config.RoleGroups.VP_LEITUNG.Teams or {}
+    DDRPT.Config.RoleGroups.MFS.Teams = DDRPT.Config.RoleGroups.MFS.Teams or {}
 
     addTeam(DDRPT.Config.AccessTeams, TEAM_POLICE)
     addTeam(DDRPT.Config.AccessTeams, TEAM_CHIEF)
