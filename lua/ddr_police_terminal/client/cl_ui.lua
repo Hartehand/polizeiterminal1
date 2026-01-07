@@ -3,10 +3,10 @@ local NET = DDRPT.Net
 
 DDRPT.UI = DDRPT.UI or {}
 DDRPT.UI.Colors = {
-    Background = Color(18, 18, 18, 240),
-    Panel = Color(28, 28, 28, 255),
-    Accent = Color(50, 50, 50, 255),
-    Text = Color(235, 235, 235),
+    Background = Color(235, 235, 235, 245),
+    Panel = Color(245, 245, 245, 255),
+    Accent = Color(210, 210, 210, 255),
+    Text = Color(25, 25, 25),
 }
 
 local function notify(msg)

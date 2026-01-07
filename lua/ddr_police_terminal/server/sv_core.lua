@@ -236,6 +236,12 @@ hook.Add("DarkRPFinishedLoading", "DDRPT_RefreshTeams_DarkRP", function()
     end
 end)
 
+hook.Add("PlayerInitialSpawn", "DDRPT_RefreshTeams_Player", function()
+    if DDRPT.Config and DDRPT.Config.RefreshTeams then
+        DDRPT.Config.RefreshTeams()
+    end
+end)
+
 hook.Add("PlayerUse", "DDRPT_TerminalUse", function(ply, ent)
     if not IsValid(ent) or ent:GetClass() ~= "ddr_polizeiterminal" then return end
     if not DDRPT:HasAccess(ply) then
