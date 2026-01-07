@@ -8,7 +8,11 @@ local function log(msg)
 end
 
 function DB:Connect()
-    local cfg = DDRPT.Config.DB
+    local cfg = DDRPT.Config and DDRPT.Config.DB
+    if not cfg then
+        log("DB config missing. Skipping connection.")
+        return
+    end
     if cfg.Adapter == "mysqloo" then
         if not mysqloo then
             log("mysqloo not found, falling back to tmysql4.")
