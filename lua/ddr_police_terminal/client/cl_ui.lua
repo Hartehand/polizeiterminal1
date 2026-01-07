@@ -105,10 +105,14 @@ function DDRPT.UI.AddListLine(list, ...)
     if not IsValid(list) then return end
     local line = list:AddLine(...)
     if IsValid(line) then
-        line:SetTextColor(DDRPT.UI.Colors.Text)
+        if line.SetTextColor then
+            line:SetTextColor(DDRPT.UI.Colors.Text)
+        end
         line.Paint = function(self, w, h)
             draw.RoundedBox(0, 0, 0, w, h, Color(0, 0, 0, 0))
-            self:SetTextColor(DDRPT.UI.Colors.Text)
+            if self.SetTextColor then
+                self:SetTextColor(DDRPT.UI.Colors.Text)
+            end
         end
     end
     return line
