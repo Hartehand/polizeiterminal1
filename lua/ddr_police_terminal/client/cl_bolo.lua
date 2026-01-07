@@ -1,0 +1,124 @@
+DDRPT = DDRPT or {}
+local NET = DDRPT.Net
+
+function DDRPT.UI.BuildBoloTab()
+    local panel = vgui.Create("DPanel")
+    panel:DockPadding(8, 8, 8, 8)
+
+    local list = vgui.Create("DListView", panel)
+    list:Dock(FILL)
+    list:AddColumn("ID"):SetFixedWidth(40)
+    list:AddColumn("Ziel")
+    list:AddColumn("Gefahr")
+    list:AddColumn("Grund")
+    list:AddColumn("Ablauf")
+
+    local page = 1
+    local total = 0
+
+    local pagination = vgui.Create("DPanel", panel)
+    pagination:Dock(BOTTOM)
+    pagination:SetTall(40)
+    pagination:DockMargin(0, 8, 0, 0)
+
+    local pageLabel = vgui.Create("DLabel", pagination)
+    pageLabel:SetPos(8, 12)
+    pageLabel:SetText("Seite 1")
+    pageLabel:SizeToContents()
+
+    local prevBtn = vgui.Create("DButton", pagination)
+    prevBtn:SetPos(120, 8)
+    prevBtn:SetSize(80, 24)
+    prevBtn:SetText("Zurück")
+
+    local nextBtn = vgui.Create("DButton", pagination)
+    nextBtn:SetPos(210, 8)
+    nextBtn:SetSize(80, 24)
+    nextBtn:SetText("Weiter")
+
+    local function requestList()
+        net.Start(NET.BoloListRequest)
+        net.WriteUInt(page, 16)
+        net.SendToServer()
+    end
+
+    prevBtn.DoClick = function()
+        if page > 1 then
+            page = page - 1
+            requestList()
+        end
+    end
+
+    nextBtn.DoClick = function()
+        if page * DDRPT.Config.Pagination.Bolos < total then
+            page = page + 1
+            requestList()
+        end
+    end
+
+    net.Receive(NET.BoloListResponse, function()
+        page = net.ReadUInt(16)
+        local limit = net.ReadUInt(16)
+        total = net.ReadUInt(32)
+        local rows = net.ReadTable() or {}
+        list:Clear()
+        for _, row in ipairs(rows) do
+            list:AddLine(row.id, row.target_name or "", row.danger or "", row.reason or "", row.expires_at or "")
+        end
+        pageLabel:SetText(string.format("Seite %d (%d Einträge)", page, total))
+        pageLabel:SizeToContents()
+    end)
+
+    local createPanel = vgui.Create("DPanel", panel)
+    createPanel:Dock(BOTTOM)
+    createPanel:SetTall(100)
+    createPanel:DockMargin(0, 8, 0, 0)
+
+    local targetEntry = vgui.Create("DTextEntry", createPanel)
+    targetEntry:SetPos(8, 8)
+    targetEntry:SetSize(180, 22)
+    targetEntry:SetPlaceholderText("Zielname")
+
+    local steamEntry = vgui.Create("DTextEntry", createPanel)
+    steamEntry:SetPos(200, 8)
+    steamEntry:SetSize(180, 22)
+    steamEntry:SetPlaceholderText("SteamID64")
+
+    local dangerCombo = vgui.Create("DComboBox", createPanel)
+    dangerCombo:SetPos(390, 8)
+    dangerCombo:SetSize(120, 22)
+    for _, level in ipairs(DDRPT.Config.BoloDangerLevels) do
+        dangerCombo:AddChoice(level)
+    end
+    dangerCombo:SetValue(DDRPT.Config.BoloDangerLevels[1])
+
+    local reasonEntry = vgui.Create("DTextEntry", createPanel)
+    reasonEntry:SetPos(8, 36)
+    reasonEntry:SetSize(400, 50)
+    reasonEntry:SetMultiline(true)
+    reasonEntry:SetPlaceholderText("Grund")
+
+    local expiresEntry = vgui.Create("DTextEntry", createPanel)
+    expiresEntry:SetPos(420, 36)
+    expiresEntry:SetSize(150, 22)
+    expiresEntry:SetPlaceholderText("Ablauf (YYYY-MM-DD)")
+
+    local createBtn = vgui.Create("DButton", createPanel)
+    createBtn:SetPos(420, 64)
+    createBtn:SetSize(150, 22)
+    createBtn:SetText("Fahndung erstellen")
+    createBtn.DoClick = function()
+        net.Start(NET.BoloCreateRequest)
+        net.WriteTable({
+            target_name = targetEntry:GetValue(),
+            target_steamid64 = steamEntry:GetValue(),
+            danger = dangerCombo:GetValue(),
+            reason = reasonEntry:GetValue(),
+            expires_at = expiresEntry:GetValue(),
+        })
+        net.SendToServer()
+    end
+
+    requestList()
+    return panel
+end
